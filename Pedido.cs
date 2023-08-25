@@ -3,10 +3,11 @@ using EspacioCliente;
 namespace EspacioPedido;
 
 public enum PEDIDO_ESTADOS {
+  CANCELADO,
   PENDIENTE,
-  ENVIO,
+  ASIGNADO,
+  EN_CAMINO,
   COMPLETADO,
-  CANCELADO
 }
 
 public class Pedido {
@@ -14,9 +15,18 @@ public class Pedido {
   private string? obs;
   private Cliente cliente;
   private PEDIDO_ESTADOS estado;
+  private int jornal;
 
   public int Nro { get => nro; set => nro = value; }
   public string? Obs { get => obs; set => obs = value; }
-  public Cliente Cliente { get => cliente; set => cliente = value; }
-  public PEDIDO_ESTADOS Estado { get => estado; set => estado = value; }
+  public int Jornal { get => jornal; set => jornal = value; }
+
+  public void ActualizarEstadoSiguiente() {
+    if (this.estado != PEDIDO_ESTADOS.CANCELADO) {
+      this.estado = this.estado + 1;
+    }
+  }
+  public void Cancelar() {
+    this.estado = PEDIDO_ESTADOS.CANCELADO;
+  }
 }
