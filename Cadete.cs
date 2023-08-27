@@ -36,7 +36,6 @@ public class Cadete {
   }
 
   public long JornalACobrar(int jornal) {
-    List<Pedido> pedidosDelJornal = this.listadoPedidos.FindAll(pedidoItem => pedidoItem.Jornal == jornal);
-    return pedidosDelJornal.Count() * PRECIO_PEDIDO;
+    return this.listadoPedidos.Count() * PRECIO_PEDIDO;
   }
 }

@@ -15,11 +15,16 @@ public class Pedido {
   private string? obs;
   private Cliente cliente;
   private PEDIDO_ESTADOS estado;
-  private int jornal;
 
   public int Nro { get => nro; set => nro = value; }
   public string? Obs { get => obs; set => obs = value; }
-  public int Jornal { get => jornal; set => jornal = value; }
+
+  public Pedido(int nro, string? obs, Cliente cliente) {
+    this.nro = nro;
+    this.obs = obs;
+    this.cliente = cliente;
+    this.estado = PEDIDO_ESTADOS.PENDIENTE;
+  }
 
   public void ActualizarEstadoSiguiente() {
     if (this.estado != PEDIDO_ESTADOS.CANCELADO) {
