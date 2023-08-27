@@ -26,6 +26,10 @@ public class Pedido {
     this.estado = PEDIDO_ESTADOS.PENDIENTE;
   }
 
+  public void ActualizarEstado(PEDIDO_ESTADOS nuevoEstado) {
+    this.estado = nuevoEstado;
+  }
+
   public void ActualizarEstadoSiguiente() {
     if (this.estado != PEDIDO_ESTADOS.CANCELADO) {
       this.estado = this.estado + 1;

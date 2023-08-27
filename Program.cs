@@ -1,4 +1,5 @@
-﻿using EspacioCliente;
+﻿using EspacioCadete;
+using EspacioCliente;
 using EspacioPedido;
 
 internal class Program {
@@ -20,6 +21,20 @@ internal class Program {
     Pedido pedido = new Pedido(pedidoNro, PedirString("Observaciones", false), cliente);
 
     return pedido;
+  }
+
+  public static Boolean AsignarPedidoACadete(Pedido pedido, Cadete cadete) {
+    return cadete.AgregarPedido(pedido);
+  }
+
+  public static void ActualizarEstadoPedido(Pedido pedido) {
+    PEDIDO_ESTADOS nuevoEstado = (PEDIDO_ESTADOS) MostrarEstadosYPedirOpcion();
+    pedido.ActualizarEstado(nuevoEstado);
+  }
+
+  public static void ReasignarPedidoAOtroCadete(Cadete cadeteAnterior, Cadete cadeteNuevo, Pedido pedido) {
+    cadeteAnterior.RemoverPedido(pedido);
+    cadeteNuevo.AgregarPedido(pedido);
   }
 
   public static string? PedirString(string key, Boolean obligatorio) {
@@ -62,6 +77,29 @@ internal class Program {
       Console.Clear();
       Console.WriteLine("x Opción invalida, porfavor reintente");
       return MostrarMenuYPedirOpcion();
+    }
+  }
+
+  public static int MostrarEstadosYPedirOpcion() {
+    Console.WriteLine("\n");
+    Console.WriteLine("Ingrese que estado desea asignarle al pedido:");
+    
+    Console.WriteLine(" 0- CANCELADO");
+    Console.WriteLine(" 1- PENDIENTE");
+    Console.WriteLine(" 2- ASIGNADO");
+    Console.WriteLine(" 3- EN CAMINO");
+    Console.WriteLine(" 4- COMPLETADO");
+
+    int decision;
+    if (int.TryParse(Console.ReadLine(), out decision)) {
+      if (decision < 1 || decision > 5) {
+        return MostrarEstadosYPedirOpcion();
+      }
+      return decision;
+    } else {
+      Console.Clear();
+      Console.WriteLine("x Opción invalida, porfavor reintente");
+      return MostrarEstadosYPedirOpcion();
     }
   }
 }

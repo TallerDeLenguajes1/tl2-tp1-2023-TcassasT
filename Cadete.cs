@@ -23,11 +23,30 @@ public class Cadete {
     return cantidadPreviaPedidos <= this.listadoPedidos.Count();
   }
 
+  public Boolean RemoverPedido(Pedido pedido) {
+    int cantidadPreviaPedidos = this.listadoPedidos.Count();
+    this.listadoPedidos.Remove(pedido);
+
+    return cantidadPreviaPedidos >= this.listadoPedidos.Count();
+  }
+
   public Boolean CancelarPedido(Pedido pedido) {
     Pedido pedidoACancelar = this.listadoPedidos.Find(pedidoItem => pedidoItem.Nro == pedido.Nro);
 
     if (pedidoACancelar != null) {
       pedidoACancelar.Cancelar();
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Boolean ActualizarEstadoPedido(Pedido pedido, PEDIDO_ESTADOS nuevoEstado) {
+    Pedido pedidoAUpdetear = this.listadoPedidos.Find(pedidoItem => pedidoItem.Nro == pedido.Nro);
+
+    if (pedidoAUpdetear != null) {
+      pedidoAUpdetear.ActualizarEstado(nuevoEstado);
 
       return true;
     } else {
