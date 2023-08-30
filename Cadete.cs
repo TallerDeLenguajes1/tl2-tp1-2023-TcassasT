@@ -9,7 +9,7 @@ public class Cadete {
   private string? nombre;
   private string? direccion;
   private long telefono;
-  private List<Pedido> listadoPedidos;
+  private List<Pedido> listadoPedidos = new List<Pedido>();
 
   public int Id { get => id; set => id = value; }
   public string? Nombre { get => nombre; set => nombre = value; }

@@ -1,5 +1,6 @@
 using EspacioCadete;
 using EspacioPedido;
+using EspacioDatos;
 
 namespace EspacioCadeteria;
 
@@ -11,6 +12,12 @@ public class Cadeteria {
   public string? Nombre { get => nombre; set => nombre = value; }
   public long Telefono { get => telefono; set => telefono = value; }
   public List<Cadete> ListadoCadetes { get => listadoCadetes; set => listadoCadetes = value; }
+
+  public Cadeteria(string? nombre, long telefono) {
+    this.nombre = nombre;
+    this.telefono = telefono;
+    this.listadoCadetes = Datos.LeerCadetesCSV("cadetes.csv");
+  }
 
   public Boolean CrearPedido(Cadete cadete, Pedido pedido) {
     return cadete.AgregarPedido(pedido);

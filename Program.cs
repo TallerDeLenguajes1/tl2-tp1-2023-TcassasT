@@ -4,7 +4,7 @@ using EspacioCliente;
 using EspacioPedido;
 
 internal class Program {
-  private static Cadeteria cadeteria = new Cadeteria();
+  private static Cadeteria cadeteria = new Cadeteria("Super cadeteria", 3813870000);
   private static List<Pedido> pedidosSinAsignar = new List<Pedido>();
 
   private static void Main(string[] args) {
