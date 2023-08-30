@@ -1,10 +1,33 @@
 ﻿using EspacioCadete;
+using EspacioCadeteria;
 using EspacioCliente;
 using EspacioPedido;
 
 internal class Program {
-  private static void Main(string[] args) {
+  private static Cadeteria cadeteria = new Cadeteria();
+  private static List<Pedido> pedidosSinAsignar = new List<Pedido>();
 
+  private static void Main(string[] args) {
+    int decision = MostrarMenuYPedirOpcion();
+    int idPedidoAutoIncremental = 1;
+
+    while (decision != 6) {
+      switch(decision) {
+        case 1:
+          pedidosSinAsignar.Add(InstanciarPedido(idPedidoAutoIncremental));
+          idPedidoAutoIncremental += 1;
+          break;
+        case 2:
+          AsignarPedidoACadete(cadeteria);
+          break;
+        case 3:
+          ActualizarEstadoPedido(cadeteria);
+          break;
+        case 4:
+          ReasignarPedidoAOtroCadete(cadeteria);
+          break;
+      }
+    }
   }
 
   public static Pedido InstanciarPedido(int pedidoNro) {
@@ -23,18 +46,114 @@ internal class Program {
     return pedido;
   }
 
-  public static Boolean AsignarPedidoACadete(Pedido pedido, Cadete cadete) {
-    return cadete.AgregarPedido(pedido);
+  public static Boolean AsignarPedidoACadete(Cadeteria cadeteria) {
+    Console.Clear();
+    Console.WriteLine("- Listado de pedidos pendientes de asignación:");
+    foreach (Pedido pedidoSinAsignar in pedidosSinAsignar) {
+      Console.Write(" x " + pedidoSinAsignar.ToString());
+    }
+
+    int nroPedidoAAsignar = PedirInt("Nro de pedido", true);
+    Pedido? pedidoAAsignar = pedidosSinAsignar.Find(pedidoItem => pedidoItem.Nro == nroPedidoAAsignar);
+    while (pedidoAAsignar == null && nroPedidoAAsignar != 0) {
+      Console.WriteLine(" x Nro de pedido invalido, porfavor reintente.");
+      nroPedidoAAsignar = PedirInt("Nro de pedido", true);
+      pedidoAAsignar = pedidosSinAsignar.Find(pedidoItem => pedidoItem.Nro == nroPedidoAAsignar);
+    }
+
+    if (pedidoAAsignar == null) {
+      return false;
+    }
+
+    // --
+
+    Console.WriteLine("- Listado de cadetes disponibles:");
+    foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
+      Console.Write(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + cadeteItem.GetCantidadDePedidos());
+    }
+
+    int idCadeteAAsignar = PedirInt("Id de cadete", true);
+    Cadete? cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAAsignar);
+    while (cadeteAAsignar == null && idCadeteAAsignar != 0) {
+      Console.WriteLine(" x Id de cadete invalido, porfavor reintente.");
+      idCadeteAAsignar = PedirInt("Nro de pedido", true);
+      cadeteAAsignar = cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAAsignar);
+    }
+
+    if (cadeteAAsignar == null) {
+      return false;
+    }
+
+    Boolean asignacionResponse = cadeteAAsignar.AgregarPedido(pedidoAAsignar);
+
+    if (asignacionResponse) {
+      pedidosSinAsignar.Remove(pedidoAAsignar);
+    }
+
+    return asignacionResponse;
   }
 
-  public static void ActualizarEstadoPedido(Pedido pedido) {
+  public static void ActualizarEstadoPedido(Cadeteria cadeteria) {
+    Console.Clear();
+    Console.WriteLine("- Listado de pedidos por cadete");
+
+    foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
+      Console.Write(" x " + cadeteItem.Id + "\t" + cadeteItem.Nombre);
+      foreach (Pedido pedidoItem in cadeteItem.ListadoPedidos) {
+        Console.WriteLine("   - " + pedidoItem.ToString());
+      }
+    }
+
+    int nroPedidoAActualizar = PedirInt("Nro pedido", true);
+    Pedido pedidoAActualizar = cadeteria.BuscaPedido(nroPedidoAActualizar);
+    while (pedidoAActualizar == null && nroPedidoAActualizar != 0) {
+      Console.WriteLine(" x Nro de pedido invalido, porfavor reintente.");
+      nroPedidoAActualizar = PedirInt("Nro de pedido", true);
+      pedidoAActualizar = cadeteria.BuscaPedido(nroPedidoAActualizar);
+    }
+
+    if (pedidoAActualizar == null) {
+      return;
+    }
+
+    Console.WriteLine("\n");
     PEDIDO_ESTADOS nuevoEstado = (PEDIDO_ESTADOS) MostrarEstadosYPedirOpcion();
-    pedido.ActualizarEstado(nuevoEstado);
+    pedidoAActualizar.ActualizarEstado(nuevoEstado);
   }
 
-  public static void ReasignarPedidoAOtroCadete(Cadete cadeteAnterior, Cadete cadeteNuevo, Pedido pedido) {
-    cadeteAnterior.RemoverPedido(pedido);
-    cadeteNuevo.AgregarPedido(pedido);
+  public static void ReasignarPedidoAOtroCadete(Cadeteria cadeteria) {
+    Console.Clear();
+    Console.WriteLine("- Listado de pedidos por cadete");
+
+    foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
+      Console.WriteLine(" x " + cadeteItem.Id + "\t" + cadeteItem.Nombre);
+      foreach (Pedido pedidoItem in cadeteItem.ListadoPedidos) {
+        Console.WriteLine("   - " + pedidoItem.ToString());
+      }
+    }
+
+    Console.WriteLine("\nPor favor elija el pedido a reasignar:");
+    int nroPedidoAReasignar = PedirInt("Nro pedido", true);
+    Pedido pedidoAReasignar = cadeteria.BuscaPedido(nroPedidoAReasignar);
+    while (pedidoAReasignar == null && nroPedidoAReasignar != 0) {
+      Console.WriteLine(" x Nro de pedido invalido, porfavor reintente.");
+      nroPedidoAReasignar = PedirInt("Nro de pedido", true);
+      pedidoAReasignar = cadeteria.BuscaPedido(nroPedidoAReasignar);
+    }
+
+    // --
+
+    Console.WriteLine("\nAhora el cadete al que quiere asignar el pedido N° " + pedidoAReasignar.Nro + ":");
+    int idCadeteAReasignar = PedirInt("Id de cadete", true);
+    Cadete? cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAReasignar);
+    while (cadeteAAsignar == null && idCadeteAReasignar != 0) {
+      Console.WriteLine(" x Id de cadete invalido, porfavor reintente.");
+      idCadeteAReasignar = PedirInt("Nro de pedido", true);
+      cadeteAAsignar = cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAReasignar);
+    }
+
+    cadeteria.GetCadeteByPedidoNro(nroPedidoAReasignar).RemoverPedido(pedidoAReasignar);
+    cadeteAAsignar.AgregarPedido(pedidoAReasignar);
   }
 
   public static string? PedirString(string key, Boolean obligatorio) {

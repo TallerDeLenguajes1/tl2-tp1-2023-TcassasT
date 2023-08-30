@@ -19,4 +19,28 @@ public class Cadeteria {
   public Boolean CancelarPedido(Cadete cadete, Pedido pedido) {
     return cadete.CancelarPedido(pedido);
   }
+
+  public Pedido BuscaPedido(int nroPedido) {
+    return this.listadoCadetes.Find(
+      cadeteItem => cadeteItem.ListadoPedidos.Find(
+        pedidoItem => pedidoItem.Nro == nroPedido
+      ) != null
+    ).ListadoPedidos.Find(pedidoItem => pedidoItem.Nro == nroPedido);
+  }
+
+  public Boolean ExistePedido(int nroPedido) {
+    return this.listadoCadetes.Find(
+      cadeteItem => cadeteItem.ListadoPedidos.Find(
+        pedidoItem => pedidoItem.Nro == nroPedido
+      ) != null
+    ) != null;
+  }
+
+  public Cadete GetCadeteByPedidoNro(int nroPedido) {
+    return this.listadoCadetes.Find(
+      cadeteItem => cadeteItem.ListadoPedidos.Find(
+        pedidoItem => pedidoItem.Nro == nroPedido
+      ) != null
+    );
+  }
 }

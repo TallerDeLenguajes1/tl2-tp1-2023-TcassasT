@@ -38,4 +38,12 @@ public class Pedido {
   public void Cancelar() {
     this.estado = PEDIDO_ESTADOS.CANCELADO;
   }
+
+    public override string ToString() {
+      string pedidoString = "Pedido N° " + this.Nro;
+      if (!String.IsNullOrEmpty(this.Obs)) {
+        pedidoString = " (" + this.Obs + ").";
+      }
+      return pedidoString;
+    }
 }

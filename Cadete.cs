@@ -15,6 +15,7 @@ public class Cadete {
   public string? Nombre { get => nombre; set => nombre = value; }
   public string? Direccion { get => direccion; set => direccion = value; }
   public long Telefono { get => telefono; set => telefono = value; }
+  public List<Pedido> ListadoPedidos { get => listadoPedidos; }
 
   public Boolean AgregarPedido(Pedido pedido) {
     int cantidadPreviaPedidos = this.listadoPedidos.Count();
@@ -56,5 +57,9 @@ public class Cadete {
 
   public long JornalACobrar(int jornal) {
     return this.listadoPedidos.Count() * PRECIO_PEDIDO;
+  }
+
+  public int GetCantidadDePedidos() {
+    return this.listadoPedidos.Count();
   }
 }
