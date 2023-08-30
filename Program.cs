@@ -4,18 +4,26 @@ using EspacioCliente;
 using EspacioPedido;
 
 internal class Program {
-  private static Cadeteria cadeteria = new Cadeteria("Super cadeteria", 3813870000);
   private static List<Pedido> pedidosSinAsignar = new List<Pedido>();
 
   private static void Main(string[] args) {
+    Cadeteria cadeteria = new Cadeteria("Super cadeteria", 3813870000);
+
     int decision = MostrarMenuYPedirOpcion();
     int idPedidoAutoIncremental = 1;
 
-    while (decision != 6) {
+    while (decision != 5) {
       switch(decision) {
         case 1:
+          int coutAntesDeAgregar = pedidosSinAsignar.Count();
           pedidosSinAsignar.Add(InstanciarPedido(idPedidoAutoIncremental));
-          idPedidoAutoIncremental += 1;
+
+          if (coutAntesDeAgregar < pedidosSinAsignar.Count()) {
+            Console.WriteLine("== ¡Pedido instanciado exitosamente! ==");
+            Thread.Sleep(4000);
+            Console.Clear();
+            idPedidoAutoIncremental += 1;
+          }
           break;
         case 2:
           AsignarPedidoACadete(cadeteria);
@@ -27,6 +35,8 @@ internal class Program {
           ReasignarPedidoAOtroCadete(cadeteria);
           break;
       }
+
+      decision = MostrarMenuYPedirOpcion();
     }
   }
 
@@ -50,14 +60,14 @@ internal class Program {
     Console.Clear();
     Console.WriteLine("- Listado de pedidos pendientes de asignación:");
     foreach (Pedido pedidoSinAsignar in pedidosSinAsignar) {
-      Console.Write(" x " + pedidoSinAsignar.ToString());
+      Console.WriteLine(" x " + pedidoSinAsignar.ToString());
     }
 
     int nroPedidoAAsignar = PedirInt("Nro de pedido", true);
     Pedido? pedidoAAsignar = pedidosSinAsignar.Find(pedidoItem => pedidoItem.Nro == nroPedidoAAsignar);
     while (pedidoAAsignar == null && nroPedidoAAsignar != 0) {
       Console.WriteLine(" x Nro de pedido invalido, porfavor reintente.");
-      nroPedidoAAsignar = PedirInt("Nro de pedido", true);
+      nroPedidoAAsignar = PedirInt("Nro de pedido a asignar", true);
       pedidoAAsignar = pedidosSinAsignar.Find(pedidoItem => pedidoItem.Nro == nroPedidoAAsignar);
     }
 
@@ -69,7 +79,7 @@ internal class Program {
 
     Console.WriteLine("- Listado de cadetes disponibles:");
     foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
-      Console.Write(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + cadeteItem.GetCantidadDePedidos());
+      Console.WriteLine(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + cadeteItem.GetCantidadDePedidos());
     }
 
     int idCadeteAAsignar = PedirInt("Id de cadete", true);
@@ -98,7 +108,7 @@ internal class Program {
     Console.WriteLine("- Listado de pedidos por cadete");
 
     foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
-      Console.Write(" x " + cadeteItem.Id + "\t" + cadeteItem.Nombre);
+      Console.WriteLine(" x " + cadeteItem.Id + "\t" + cadeteItem.Nombre);
       foreach (Pedido pedidoItem in cadeteItem.ListadoPedidos) {
         Console.WriteLine("   - " + pedidoItem.ToString());
       }
@@ -157,8 +167,8 @@ internal class Program {
   }
 
   public static string? PedirString(string key, Boolean obligatorio) {
-    string? input = Console.ReadLine();
     Console.WriteLine(" - " + key + ":");
+    string? input = Console.ReadLine();
     if (input == null && obligatorio) {
       Console.WriteLine("x Input invalido, porfavor reintente.");
       return PedirString(key, obligatorio);

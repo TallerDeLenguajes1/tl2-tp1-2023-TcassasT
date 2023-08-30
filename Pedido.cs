@@ -42,7 +42,7 @@ public class Pedido {
     public override string ToString() {
       string pedidoString = "Pedido N° " + this.Nro;
       if (!String.IsNullOrEmpty(this.Obs)) {
-        pedidoString = " (" + this.Obs + ").";
+        pedidoString += " (" + this.Obs + ").";
       }
       return pedidoString;
     }
