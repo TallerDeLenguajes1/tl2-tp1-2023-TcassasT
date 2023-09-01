@@ -1,5 +1,6 @@
 using EspacioCadete;
 using EspacioPedido;
+using EspacioCadeteria;
 
 namespace EspacioDatos;
 
@@ -8,9 +9,9 @@ public class Datos {
     List<Cadete> listaDeCadetes = new List<Cadete>();
 
     if (Existe(nombreDeArchivo)) {
-      string? contenidoDeArchivoDeProductos = File.ReadAllText(nombreDeArchivo);
+      string? contenidoDeArchivoDeCadetes = File.ReadAllText(nombreDeArchivo);
 
-      foreach (var cadeteLinea in contenidoDeArchivoDeProductos.Split("\n")) {
+      foreach (var cadeteLinea in contenidoDeArchivoDeCadetes.Split("\n")) {
         string[] cadeteLineaPropiedades = cadeteLinea.Split(",");
 
         if (cadeteLineaPropiedades.Length == 4) {
@@ -28,6 +29,23 @@ public class Datos {
     }
 
     return listaDeCadetes;
+  }
+
+  static public Cadeteria LeerCadeteria(string nombreDeArchivo) {
+    Cadeteria cadeteria = null;
+    if (Existe(nombreDeArchivo)) {
+      string? contenidoDeArchivoDeCadeteria = File.ReadAllText(nombreDeArchivo);
+      string[] cadeteriaLineaPropiedades = contenidoDeArchivoDeCadeteria.Split(",");
+
+      if (cadeteriaLineaPropiedades.Length == 2) {
+        cadeteria = new Cadeteria(
+          cadeteriaLineaPropiedades[0],
+          long.Parse(cadeteriaLineaPropiedades[1])
+        );
+      }
+    }
+
+    return cadeteria;
   }
 
   static public Boolean Existe(string nombreDeArchivo) {

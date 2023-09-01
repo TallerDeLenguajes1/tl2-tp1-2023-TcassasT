@@ -1,8 +1,9 @@
 ﻿using EspacioCadeteria;
+using EspacioDatos;
 
 internal class Program {
   private static void Main(string[] args) {
-    Cadeteria cadeteria = new Cadeteria("Super cadeteria", 3813870000);
+    Cadeteria cadeteria = Datos.LeerCadeteria("cadeteria.csv");
 
     int decision = MostrarMenuYPedirOpcion();
 

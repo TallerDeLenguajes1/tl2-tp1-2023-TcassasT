@@ -204,11 +204,15 @@ public class Cadeteria {
     Console.WriteLine(" x Monto total recaudado: " + totalRecaudado);
     Console.WriteLine(" x Informe por cadete:");
 
-    foreach (Cadete cadeteItem in this.listadoCadetes) {
-      Console.WriteLine("   x Cadete " + cadeteItem.Nombre);
-      Console.WriteLine("     x Pedidos: " + cadeteItem.ListadoPedidos.Count());
-      Console.WriteLine("     x Total recaudado: " + cadeteItem.JornalACobrar());
-      Console.WriteLine("     x Porcentaje respecto al total de pedidos: " + cadeteItem.ListadoPedidos.Count() / this.pedidos.Count());
+    if (this.pedidos.Count() != 0) {
+      foreach (Cadete cadeteItem in this.listadoCadetes) {
+        Console.WriteLine("   x Cadete " + cadeteItem.Nombre);
+        Console.WriteLine("     x Pedidos: " + cadeteItem.ListadoPedidos.Count());
+        Console.WriteLine("     x Total recaudado: " + cadeteItem.JornalACobrar());
+        Console.WriteLine("     x Porcentaje respecto al total de pedidos: " + cadeteItem.ListadoPedidos.Count() / this.pedidos.Count());
+      }
+    } else {
+      Console.WriteLine("   x No hay pedidos registrados, se omite detalle por cadete.");
     }
   }
 }
