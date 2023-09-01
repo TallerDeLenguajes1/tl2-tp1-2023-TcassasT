@@ -55,7 +55,7 @@ public class Cadete {
     }
   }
 
-  public long JornalACobrar(int jornal) {
+  public long JornalACobrar() {
     return this.listadoPedidos.Count() * PRECIO_PEDIDO;
   }
 

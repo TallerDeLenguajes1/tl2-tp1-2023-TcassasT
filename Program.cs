@@ -1,4 +1,5 @@
-﻿using EspacioCadete;
+﻿using System.Diagnostics;
+using EspacioCadete;
 using EspacioCadeteria;
 using EspacioCliente;
 using EspacioPedido;
@@ -12,7 +13,7 @@ internal class Program {
     int decision = MostrarMenuYPedirOpcion();
     int idPedidoAutoIncremental = 1;
 
-    while (decision != 5) {
+    while (decision != 6) {
       switch(decision) {
         case 1:
           int coutAntesDeAgregar = pedidosSinAsignar.Count();
@@ -20,8 +21,6 @@ internal class Program {
 
           if (coutAntesDeAgregar < pedidosSinAsignar.Count()) {
             Console.WriteLine("== ¡Pedido instanciado exitosamente! ==");
-            Thread.Sleep(4000);
-            Console.Clear();
             idPedidoAutoIncremental += 1;
           }
           break;
@@ -34,8 +33,13 @@ internal class Program {
         case 4:
           ReasignarPedidoAOtroCadete(cadeteria);
           break;
+        case 5:
+          CobrarJornalCadete(cadeteria);
+          break;
       }
 
+      Thread.Sleep(4000);
+      Console.Clear();
       decision = MostrarMenuYPedirOpcion();
     }
   }
@@ -75,20 +79,7 @@ internal class Program {
       return false;
     }
 
-    // --
-
-    Console.WriteLine("- Listado de cadetes disponibles:");
-    foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
-      Console.WriteLine(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + cadeteItem.GetCantidadDePedidos());
-    }
-
-    int idCadeteAAsignar = PedirInt("Id de cadete", true);
-    Cadete? cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAAsignar);
-    while (cadeteAAsignar == null && idCadeteAAsignar != 0) {
-      Console.WriteLine(" x Id de cadete invalido, porfavor reintente.");
-      idCadeteAAsignar = PedirInt("Nro de pedido", true);
-      cadeteAAsignar = cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAAsignar);
-    }
+    Cadete cadeteAAsignar = EligeCadete(cadeteria, true);
 
     if (cadeteAAsignar == null) {
       return false;
@@ -151,16 +142,8 @@ internal class Program {
       pedidoAReasignar = cadeteria.BuscaPedido(nroPedidoAReasignar);
     }
 
-    // --
-
     Console.WriteLine("\nAhora el cadete al que quiere asignar el pedido N° " + pedidoAReasignar.Nro + ":");
-    int idCadeteAReasignar = PedirInt("Id de cadete", true);
-    Cadete? cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAReasignar);
-    while (cadeteAAsignar == null && idCadeteAReasignar != 0) {
-      Console.WriteLine(" x Id de cadete invalido, porfavor reintente.");
-      idCadeteAReasignar = PedirInt("Nro de pedido", true);
-      cadeteAAsignar = cadeteAAsignar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteAReasignar);
-    }
+    Cadete cadeteAAsignar = EligeCadete(cadeteria, false);
 
     cadeteria.GetCadeteByPedidoNro(nroPedidoAReasignar).RemoverPedido(pedidoAReasignar);
     cadeteAAsignar.AgregarPedido(pedidoAReasignar);
@@ -186,6 +169,11 @@ internal class Program {
     return input;
   }
 
+  public static void CobrarJornalCadete(Cadeteria cadeteria) {
+    Cadete cadeteACobrar = EligeCadete(cadeteria, true);
+    Console.WriteLine(" - Cadete " + cadeteACobrar.Nombre + " debe recibir: $" + cadeteACobrar.JornalACobrar());
+  }
+
   public static int MostrarMenuYPedirOpcion() {
     Console.WriteLine("\n");
     Console.WriteLine("Ingrese alguna de las siguientes opciones:");
@@ -194,11 +182,12 @@ internal class Program {
     Console.WriteLine(" 2- Asignar pedido a cadete");
     Console.WriteLine(" 3- Cambiar estado de pedido");
     Console.WriteLine(" 4- Reasignar pedido a otro cadete");
-    Console.WriteLine(" 5- Salir");
+    Console.WriteLine(" 5- Cobrar jornal de cadete");
+    Console.WriteLine(" 6- Salir");
 
     int decision;
     if (int.TryParse(Console.ReadLine(), out decision)) {
-      if (decision < 1 || decision > 5) {
+      if (decision < 1 || decision > 6) {
         return MostrarMenuYPedirOpcion();
       }
       return decision;
@@ -230,5 +219,24 @@ internal class Program {
       Console.WriteLine("x Opción invalida, porfavor reintente");
       return MostrarEstadosYPedirOpcion();
     }
+  }
+
+  public static Cadete EligeCadete(Cadeteria cadeteria, Boolean mostrarListaDeCadetes) {
+    if (mostrarListaDeCadetes) {
+      Console.WriteLine("- Listado de cadetes:");
+      foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
+        Console.WriteLine(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + cadeteItem.GetCantidadDePedidos());
+      }
+    }
+
+    int idCadeteACobrar = PedirInt("Id de cadete", true);
+    Cadete? cadeteACobrar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteACobrar);
+    while (cadeteACobrar == null && idCadeteACobrar != 0) {
+      Console.WriteLine(" x Id de cadete invalido, porfavor reintente.");
+      idCadeteACobrar = PedirInt("Nro de pedido", true);
+      cadeteACobrar = cadeteria.ListadoCadetes.Find(cadeteItem => cadeteItem.Id == idCadeteACobrar);
+    }
+
+    return cadeteACobrar;
   }
 }
