@@ -56,7 +56,8 @@ public class Cadete {
   }
 
   public long JornalACobrar() {
-    return this.listadoPedidos.Count() * PRECIO_PEDIDO;
+    List<Pedido> pedidosCompletados = this.listadoPedidos.FindAll(pedidoItem => pedidoItem.Estado == PEDIDO_ESTADOS.COMPLETADO.ToString());
+    return pedidosCompletados.Count() * PRECIO_PEDIDO;
   }
 
   public int GetCantidadDePedidos() {

@@ -18,6 +18,7 @@ public class Pedido {
 
   public int Nro { get => nro; set => nro = value; }
   public string? Obs { get => obs; set => obs = value; }
+  public string Estado { get => estado.ToString(); }
 
   public Pedido(int nro, string? obs, Cliente cliente) {
     this.nro = nro;
