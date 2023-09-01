@@ -14,11 +14,14 @@ public class Datos {
         string[] cadeteLineaPropiedades = cadeteLinea.Split(",");
 
         if (cadeteLineaPropiedades.Length == 4) {
-          Cadete cadete = new Cadete();
-          cadete.Id = int.Parse(cadeteLineaPropiedades[0]);
-          cadete.Nombre = cadeteLineaPropiedades[1];
-          cadete.Direccion = cadeteLineaPropiedades[2];
-          cadete.Telefono = long.Parse(cadeteLineaPropiedades[3]);
+          Cadete cadete = new Cadete(
+            int.Parse(cadeteLineaPropiedades[0]),
+            cadeteLineaPropiedades[1],
+            cadeteLineaPropiedades[2],
+            long.Parse(cadeteLineaPropiedades[3]),
+            new List<Pedido>()
+          );
+
           listaDeCadetes.Add(cadete);
         }
       }

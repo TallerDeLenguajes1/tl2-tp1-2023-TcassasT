@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using EspacioCadete;
-using EspacioCadeteria;
-using EspacioCliente;
-using EspacioPedido;
+﻿using EspacioCadeteria;
 
 internal class Program {
   private static void Main(string[] args) {
@@ -10,7 +6,7 @@ internal class Program {
 
     int decision = MostrarMenuYPedirOpcion();
 
-    while (decision != 6) {
+    while (true) {
       switch(decision) {
         case 1:
           cadeteria.InstanciarPedido();
@@ -27,6 +23,9 @@ internal class Program {
         case 5:
           cadeteria.CobrarJornalCadete();
           break;
+        case 6:
+          cadeteria.ImprimirInforme();
+          return;
       }
 
       Thread.Sleep(4000);

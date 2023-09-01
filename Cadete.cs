@@ -17,6 +17,14 @@ public class Cadete {
   public long Telefono { get => telefono; set => telefono = value; }
   public List<Pedido> ListadoPedidos { get => listadoPedidos; }
 
+  public Cadete(int id, string nombre, string direccion, long telefono, List<Pedido> pedidos) {
+    this.id = id;
+    this.nombre = nombre;
+    this.direccion = direccion;
+    this.telefono = telefono;
+    this.listadoPedidos = pedidos;
+  }
+
   public Boolean AgregarPedido(Pedido pedido) {
     int cantidadPreviaPedidos = this.listadoPedidos.Count();
     this.listadoPedidos.Add(pedido);

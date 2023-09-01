@@ -30,7 +30,7 @@ public class Cadeteria {
     return cadete.CancelarPedido(pedido);
   }
 
-  public Pedido BuscaPedido(int nroPedido) {
+  private Pedido BuscaPedido(int nroPedido) {
     return this.listadoCadetes.Find(
       cadeteItem => cadeteItem.ListadoPedidos.Find(
         pedidoItem => pedidoItem.Nro == nroPedido
@@ -38,7 +38,7 @@ public class Cadeteria {
     ).ListadoPedidos.Find(pedidoItem => pedidoItem.Nro == nroPedido);
   }
 
-  public Boolean ExistePedido(int nroPedido) {
+  private Boolean ExistePedido(int nroPedido) {
     return this.listadoCadetes.Find(
       cadeteItem => cadeteItem.ListadoPedidos.Find(
         pedidoItem => pedidoItem.Nro == nroPedido
@@ -46,7 +46,7 @@ public class Cadeteria {
     ) != null;
   }
 
-  public Cadete GetCadeteByPedidoNro(int nroPedido) {
+  private Cadete GetCadeteByPedidoNro(int nroPedido) {
     return this.listadoCadetes.Find(
       cadeteItem => cadeteItem.ListadoPedidos.Find(
         pedidoItem => pedidoItem.Nro == nroPedido
@@ -54,7 +54,7 @@ public class Cadeteria {
     );
   }
 
-  public Cadete EligeCadete(Boolean mostrarListaDeCadetes) {
+  private Cadete EligeCadete(Boolean mostrarListaDeCadetes) {
     if (mostrarListaDeCadetes) {
       Console.WriteLine("- Listado de cadetes:");
       foreach (Cadete cadeteItem in this.ListadoCadetes) {
@@ -80,6 +80,12 @@ public class Cadeteria {
 
   public void ReasignarPedidoAOtroCadete() {
     Console.Clear();
+
+    if (this.pedidos.Count() == 0) {
+      Console.WriteLine(" x No hay pedidos disponibles para reasignar");
+      return;
+    }
+
     Console.WriteLine("- Listado de pedidos por cadete");
 
     foreach (Cadete cadeteItem in this.ListadoCadetes) {
@@ -158,6 +164,12 @@ public class Cadeteria {
 
   public Boolean AsignarPedidoACadete() {
     Console.Clear();
+
+    if (this.pedidos.Count() == 0) {
+      Console.WriteLine(" x No hay pedidos disponibles para asignar");
+      return false;
+    }
+
     Console.WriteLine("- Listado de pedidos pendientes de asignación:");
     foreach (Pedido pedido in this.pedidos) {
       Console.WriteLine(" x " + pedido.ToString());
@@ -181,12 +193,22 @@ public class Cadeteria {
       return false;
     }
 
-    Boolean asignacionResponse = cadeteAAsignar.AgregarPedido(pedidoAAsignar);
+    return cadeteAAsignar.AgregarPedido(pedidoAAsignar);
+  }
 
-    if (asignacionResponse) {
-      this.pedidos.Remove(pedidoAAsignar);
+  public void ImprimirInforme() {
+    long totalRecaudado = this.listadoCadetes.Sum(cadete => cadete.JornalACobrar());
+
+    Console.Clear();
+    Console.WriteLine("- Informe de cierre");
+    Console.WriteLine(" x Monto total recaudado: " + totalRecaudado);
+    Console.WriteLine(" x Informe por cadete:");
+
+    foreach (Cadete cadeteItem in this.listadoCadetes) {
+      Console.WriteLine("   x Cadete " + cadeteItem.Nombre);
+      Console.WriteLine("     x Pedidos: " + cadeteItem.ListadoPedidos.Count());
+      Console.WriteLine("     x Total recaudado: " + cadeteItem.JornalACobrar());
+      Console.WriteLine("     x Porcentaje respecto al total de pedidos: " + cadeteItem.ListadoPedidos.Count() / this.pedidos.Count());
     }
-
-    return asignacionResponse;
   }
 }
