@@ -12,9 +12,9 @@ public class Cadeteria {
   private List<Cadete> listadoCadetes;
   private List<Pedido> pedidos = new List<Pedido>();
 
-  public string? Nombre { get => nombre; set => nombre = value; }
-  public long Telefono { get => telefono; set => telefono = value; }
-  public List<Cadete> ListadoCadetes { get => listadoCadetes; set => listadoCadetes = value; }
+  public string? Nombre { get => nombre;}
+  public long Telefono { get => telefono;}
+  public List<Cadete> ListadoCadetes { get => listadoCadetes;}
 
   public Cadeteria(string? nombre, long telefono) {
     this.nombre = nombre;

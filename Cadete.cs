@@ -11,10 +11,10 @@ public class Cadete {
   private long telefono;
   private List<Pedido> listadoPedidos = new List<Pedido>();
 
-  public int Id { get => id; set => id = value; }
-  public string? Nombre { get => nombre; set => nombre = value; }
-  public string? Direccion { get => direccion; set => direccion = value; }
-  public long Telefono { get => telefono; set => telefono = value; }
+  public int Id { get => id; }
+  public string? Nombre { get => nombre; }
+  public string? Direccion { get => direccion; }
+  public long Telefono { get => telefono; }
   public List<Pedido> ListadoPedidos { get => listadoPedidos; }
 
   public Cadete(int id, string nombre, string direccion, long telefono, List<Pedido> pedidos) {

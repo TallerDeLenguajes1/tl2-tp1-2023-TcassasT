@@ -16,8 +16,8 @@ public class Pedido {
   private Cliente cliente;
   private PEDIDO_ESTADOS estado;
 
-  public int Nro { get => nro; set => nro = value; }
-  public string? Obs { get => obs; set => obs = value; }
+  public int Nro { get => nro; }
+  public string? Obs { get => obs; }
   public string Estado { get => estado.ToString(); }
 
   public Pedido(int nro, string? obs, Cliente cliente) {
@@ -31,16 +31,9 @@ public class Pedido {
     this.estado = nuevoEstado;
   }
 
-  public void ActualizarEstadoSiguiente() {
-    if (this.estado != PEDIDO_ESTADOS.CANCELADO) {
-      this.estado = this.estado + 1;
-    }
-  }
   public void Cancelar() {
     this.estado = PEDIDO_ESTADOS.CANCELADO;
   }
-
-  
 
   public override string ToString() {
     string pedidoString = "Pedido N° " + this.Nro;
