@@ -25,7 +25,7 @@ internal class Program {
           cadeteria.CobrarJornalCadete();
           break;
         case 6:
-          cadeteria.ImprimirInforme();
+          Console.WriteLine(cadeteria.GenerarInforme());
           return;
       }
 

@@ -3,6 +3,7 @@ using EspacioPedido;
 using EspacioDatos;
 using EspacioUtils;
 using EspacioCliente;
+using EspacioInforme;
 
 namespace EspacioCadeteria;
 
@@ -109,6 +110,7 @@ public class Cadeteria {
 
     this.GetCadeteByPedidoNro(nroPedidoAReasignar).RemoverPedido(pedidoAReasignar);
     cadeteAAsignar.AgregarPedido(pedidoAReasignar);
+    this.pedidos.Remove(pedidoAReasignar);
   }
 
   public void ActualizarEstadoPedido() {
@@ -196,23 +198,8 @@ public class Cadeteria {
     return cadeteAAsignar.AgregarPedido(pedidoAAsignar);
   }
 
-  public void ImprimirInforme() {
-    long totalRecaudado = this.listadoCadetes.Sum(cadete => cadete.JornalACobrar());
-
-    Console.Clear();
-    Console.WriteLine("- Informe de cierre");
-    Console.WriteLine(" x Monto total recaudado: " + totalRecaudado);
-    Console.WriteLine(" x Informe por cadete:");
-
-    if (this.pedidos.Count() != 0) {
-      foreach (Cadete cadeteItem in this.listadoCadetes) {
-        Console.WriteLine("   x Cadete " + cadeteItem.Nombre);
-        Console.WriteLine("     x Pedidos: " + cadeteItem.ListadoPedidos.Count());
-        Console.WriteLine("     x Total recaudado: " + cadeteItem.JornalACobrar());
-        Console.WriteLine("     x Porcentaje respecto al total de pedidos: " + cadeteItem.ListadoPedidos.Count() / this.pedidos.Count());
-      }
-    } else {
-      Console.WriteLine("   x No hay pedidos registrados, se omite detalle por cadete.");
-    }
+  public String GenerarInforme() {
+    Informe informe = new Informe();
+    return informe.GenerarInformeCadeteria(this.listadoCadetes, this.pedidos);
   }
 }
