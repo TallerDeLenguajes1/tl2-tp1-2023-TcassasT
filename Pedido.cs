@@ -1,4 +1,5 @@
 using EspacioCliente;
+using EspacioCadete;
 
 namespace EspacioPedido;
 
@@ -15,10 +16,13 @@ public class Pedido {
   private string? obs;
   private Cliente cliente;
   private PEDIDO_ESTADOS estado;
+  private Cadete cadete;
 
   public int Nro { get => nro; }
   public string? Obs { get => obs; }
   public string Estado { get => estado.ToString(); }
+  public Cadete Cadete { get => cadete; }
+  public const int PRECIO_PEDIDO = 500;
 
   public Pedido(int nro, string? obs, Cliente cliente) {
     this.nro = nro;
@@ -29,6 +33,12 @@ public class Pedido {
 
   public void ActualizarEstado(PEDIDO_ESTADOS nuevoEstado) {
     this.estado = nuevoEstado;
+  }
+
+  public Boolean AsignarPedido(Cadete cadete) {
+    Cadete cadeteAnterior = this.cadete;
+    this.cadete = cadete;
+    return this.cadete == cadeteAnterior || this.cadete == cadeteAnterior;
   }
 
   public void Cancelar() {

@@ -13,9 +13,10 @@ public class Cadeteria {
   private List<Cadete> listadoCadetes;
   private List<Pedido> pedidos = new List<Pedido>();
 
-  public string? Nombre { get => nombre;}
-  public long Telefono { get => telefono;}
-  public List<Cadete> ListadoCadetes { get => listadoCadetes;}
+  public string? Nombre { get => nombre; }
+  public long Telefono { get => telefono; }
+  public List<Cadete> ListadoCadetes { get => listadoCadetes; }
+  public List<Pedido> Pedidos { get => pedidos; }
 
   public Cadeteria(string? nombre, long telefono) {
     this.nombre = nombre;
@@ -23,43 +24,23 @@ public class Cadeteria {
     this.listadoCadetes = Datos.LeerCadetesCSV("cadetes.csv");
   }
 
-  public Boolean CrearPedido(Cadete cadete, Pedido pedido) {
-    return cadete.AgregarPedido(pedido);
-  }
-
-  public Boolean CancelarPedido(Cadete cadete, Pedido pedido) {
-    return cadete.CancelarPedido(pedido);
-  }
-
   private Pedido BuscaPedido(int nroPedido) {
-    return this.listadoCadetes.Find(
-      cadeteItem => cadeteItem.ListadoPedidos.Find(
-        pedidoItem => pedidoItem.Nro == nroPedido
-      ) != null
-    ).ListadoPedidos.Find(pedidoItem => pedidoItem.Nro == nroPedido);
+    return this.pedidos.Find(pedidoItem => pedidoItem.Nro == nroPedido);
   }
 
   private Boolean ExistePedido(int nroPedido) {
-    return this.listadoCadetes.Find(
-      cadeteItem => cadeteItem.ListadoPedidos.Find(
-        pedidoItem => pedidoItem.Nro == nroPedido
-      ) != null
-    ) != null;
+    return BuscaPedido(nroPedido) != null;
   }
 
   private Cadete GetCadeteByPedidoNro(int nroPedido) {
-    return this.listadoCadetes.Find(
-      cadeteItem => cadeteItem.ListadoPedidos.Find(
-        pedidoItem => pedidoItem.Nro == nroPedido
-      ) != null
-    );
+    return this.pedidos.Find(pedidoItem => pedidoItem.Nro == nroPedido).Cadete;
   }
 
   private Cadete EligeCadete(Boolean mostrarListaDeCadetes) {
     if (mostrarListaDeCadetes) {
       Console.WriteLine("- Listado de cadetes:");
       foreach (Cadete cadeteItem in this.ListadoCadetes) {
-        Console.WriteLine(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + cadeteItem.GetCantidadDePedidos());
+        Console.WriteLine(" x " + cadeteItem.Nombre + ", N°: " + cadeteItem.Id + ". Pedidos asignados: " + this.GetCantidadDePedidos(cadeteItem));
       }
     }
 
@@ -74,15 +55,17 @@ public class Cadeteria {
     return cadeteACobrar;
   }
 
-  public void CobrarJornalCadete() {
+  public long CobrarJornalCadete() {
     Cadete cadeteACobrar = EligeCadete(true);
-    Console.WriteLine(" - Cadete " + cadeteACobrar.Nombre + " debe recibir: $" + cadeteACobrar.JornalACobrar());
+    long cantidadACobrar = JornalACobrar(cadeteACobrar);
+    Console.WriteLine(" - Cadete " + cadeteACobrar.Nombre + " debe recibir: $" + JornalACobrar(cadeteACobrar));
+    return cantidadACobrar;
   }
 
   public void ReasignarPedidoAOtroCadete() {
     Console.Clear();
 
-    if (this.pedidos.Count() == 0) {
+    if (this.GetCantidadDePedidos() == 0) {
       Console.WriteLine(" x No hay pedidos disponibles para reasignar");
       return;
     }
@@ -91,7 +74,8 @@ public class Cadeteria {
 
     foreach (Cadete cadeteItem in this.ListadoCadetes) {
       Console.WriteLine(" x " + cadeteItem.Id + "\t" + cadeteItem.Nombre);
-      foreach (Pedido pedidoItem in cadeteItem.ListadoPedidos) {
+      
+      foreach (Pedido pedidoItem in this.GetPedidosDeCadete(cadeteItem)) {
         Console.WriteLine("   - " + pedidoItem.ToString());
       }
     }
@@ -108,9 +92,7 @@ public class Cadeteria {
     Console.WriteLine("\nAhora el cadete al que quiere asignar el pedido N° " + pedidoAReasignar.Nro + ":");
     Cadete cadeteAAsignar = EligeCadete(false);
 
-    this.GetCadeteByPedidoNro(nroPedidoAReasignar).RemoverPedido(pedidoAReasignar);
-    cadeteAAsignar.AgregarPedido(pedidoAReasignar);
-    this.pedidos.Remove(pedidoAReasignar);
+    pedidoAReasignar.AsignarPedido(cadeteAAsignar);
   }
 
   public void ActualizarEstadoPedido() {
@@ -119,7 +101,7 @@ public class Cadeteria {
 
     foreach (Cadete cadeteItem in this.ListadoCadetes) {
       Console.WriteLine(" x " + cadeteItem.Id + "\t" + cadeteItem.Nombre);
-      foreach (Pedido pedidoItem in cadeteItem.ListadoPedidos) {
+      foreach (Pedido pedidoItem in this.GetPedidosDeCadete(cadeteItem)) {
         Console.WriteLine("   - " + pedidoItem.ToString());
       }
     }
@@ -152,12 +134,12 @@ public class Cadeteria {
     cliente.DatosReferenciaDireccion = Utils.PedirString("Datos referencia de direccion", false);
 
     Console.WriteLine("\nIngrese datos del pedido:");
-    Pedido pedido = new Pedido(this.pedidos.Count(), Utils.PedirString("Observaciones", false), cliente);
+    Pedido pedido = new Pedido(this.GetCantidadDePedidos(), Utils.PedirString("Observaciones", false), cliente);
 
-    int coutAntesDeAgregar = this.pedidos.Count();
+    int coutAntesDeAgregar = this.GetCantidadDePedidos();
     this.pedidos.Add(pedido);
 
-    if (coutAntesDeAgregar < this.pedidos.Count()) {
+    if (coutAntesDeAgregar < this.GetCantidadDePedidos()) {
       Console.WriteLine("== ¡Pedido instanciado exitosamente! ==");
     }
 
@@ -167,15 +149,15 @@ public class Cadeteria {
   public Boolean AsignarPedidoACadete() {
     Console.Clear();
 
-    if (this.pedidos.Count() == 0) {
+    if (this.GetCantidadDePedidos() == 0) {
       Console.WriteLine(" x No hay pedidos disponibles para asignar");
       return false;
     }
 
     Console.WriteLine("- Listado de pedidos pendientes de asignación:");
-    foreach (Pedido pedido in this.pedidos) {
-      Console.WriteLine(" x " + pedido.ToString());
-    }
+    this.GetPedidosSinAsignar().ForEach(pedidoItem => 
+      Console.WriteLine(" x " + pedidoItem.ToString())
+    );
 
     int nroPedidoAAsignar = Utils.PedirInt("Nro de pedido", true);
     Pedido? pedidoAAsignar = this.pedidos.Find(pedidoItem => pedidoItem.Nro == nroPedidoAAsignar);
@@ -195,11 +177,83 @@ public class Cadeteria {
       return false;
     }
 
-    return cadeteAAsignar.AgregarPedido(pedidoAAsignar);
+    return pedidoAAsignar.AsignarPedido(cadeteAAsignar);
   }
 
   public String GenerarInforme() {
     Informe informe = new Informe();
-    return informe.GenerarInformeCadeteria(this.listadoCadetes, this.pedidos);
+    return informe.GenerarInformeCadeteria(this);
+  }
+
+  // Funciones que antes estaban en clase cadete
+  public Boolean AgregarPedido(Pedido pedido) {
+    int cantidadPreviaPedidos = this.GetCantidadDePedidos();
+    this.pedidos.Add(pedido);
+
+    return cantidadPreviaPedidos <= this.GetCantidadDePedidos();
+  }
+
+  public Boolean RemoverPedido(Pedido pedido) {
+    int cantidadPreviaPedidos = this.GetCantidadDePedidos();
+    this.pedidos.Remove(pedido);
+
+    return cantidadPreviaPedidos >= this.GetCantidadDePedidos();
+  }
+
+  public Boolean CancelarPedido(Pedido pedido) {
+    Pedido pedidoACancelar = BuscaPedido(pedido.Nro);
+
+    if (pedidoACancelar != null) {
+      pedidoACancelar.Cancelar();
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public Boolean ActualizarEstadoPedido(Pedido pedido, PEDIDO_ESTADOS nuevoEstado) {
+    Pedido pedidoAUpdetear = BuscaPedido(pedido.Nro);
+
+    if (pedidoAUpdetear != null) {
+      pedidoAUpdetear.ActualizarEstado(nuevoEstado);
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public long JornalACobrar(Cadete cadete) {
+    List<Pedido> pedidosCompletados = this.pedidos.FindAll(pedidoItem =>
+      pedidoItem.Estado == PEDIDO_ESTADOS.COMPLETADO.ToString() &&
+      pedidoItem.Cadete.Id == cadete.Id
+    );
+    return pedidosCompletados.Count() * Pedido.PRECIO_PEDIDO;
+  }
+
+  public int GetCantidadDePedidos() {
+    return this.pedidos.Count();
+  }
+
+  public int GetCantidadDePedidos(Cadete cadete) {
+    return this.pedidos.FindAll(pedidoItem =>
+      pedidoItem.Cadete != null &&
+      pedidoItem.Cadete.Id == cadete.Id
+    ).Count;
+  }
+
+  private List<Pedido> GetPedidosSinAsignar() {
+    return this.pedidos.FindAll(pedidoItem =>
+      pedidoItem.Cadete == null &&
+      pedidoItem.Estado != PEDIDO_ESTADOS.COMPLETADO.ToString()
+    );
+  }
+
+  private List<Pedido> GetPedidosDeCadete(Cadete cadete) {
+    return this.pedidos.FindAll(pedidoItem =>
+      pedidoItem.Cadete != null &&
+      pedidoItem.Cadete.Id == cadete.Id
+    );
   }
 }
