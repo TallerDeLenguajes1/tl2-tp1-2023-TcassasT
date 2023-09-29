@@ -1,9 +1,9 @@
 using EspacioCadete;
 using EspacioPedido;
-using EspacioDatos;
 using EspacioUtils;
 using EspacioCliente;
 using EspacioInforme;
+using System.Text.Json.Serialization;
 
 namespace EspacioCadeteria;
 
@@ -13,7 +13,9 @@ public class Cadeteria {
   private List<Cadete> listadoCadetes;
   private List<Pedido> pedidos = new List<Pedido>();
 
+  [JsonPropertyName("nombre")]
   public string? Nombre { get => nombre; }
+  [JsonPropertyName("telefono")]
   public long Telefono { get => telefono; }
   public List<Cadete> ListadoCadetes { get => listadoCadetes; }
   public List<Pedido> Pedidos { get => pedidos; }
@@ -21,7 +23,6 @@ public class Cadeteria {
   public Cadeteria(string? nombre, long telefono) {
     this.nombre = nombre;
     this.telefono = telefono;
-    this.listadoCadetes = Datos.LeerCadetesCSV("cadetes.csv");
   }
 
   private Pedido BuscaPedido(int nroPedido) {
@@ -255,5 +256,11 @@ public class Cadeteria {
       pedidoItem.Cadete != null &&
       pedidoItem.Cadete.Id == cadete.Id
     );
+  }
+
+  public void setListaCadetes(List<Cadete> cadetes) {
+    if (cadetes != null) {
+      this.listadoCadetes = cadetes;
+    }
   }
 }

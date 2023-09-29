@@ -1,14 +1,15 @@
+namespace EspacioAccesoCSV;
+
+using EspacioAccesoADatos;
 using EspacioCadete;
-using EspacioPedido;
 using EspacioCadeteria;
+using EspacioPedido;
 
-namespace EspacioDatos;
-
-public class Datos {
-  static public List<Cadete> LeerCadetesCSV(string nombreDeArchivo) {
+public class AccesoCSV: IAccesoADAtos {
+  static public List<Cadete> LeerCadetes(string nombreDeArchivo) {
     List<Cadete> listaDeCadetes = new List<Cadete>();
 
-    if (Existe(nombreDeArchivo)) {
+    if (IAccesoADAtos.Existe(nombreDeArchivo)) {
       string? contenidoDeArchivoDeCadetes = File.ReadAllText(nombreDeArchivo);
 
       foreach (var cadeteLinea in contenidoDeArchivoDeCadetes.Split("\n")) {
@@ -19,8 +20,7 @@ public class Datos {
             int.Parse(cadeteLineaPropiedades[0]),
             cadeteLineaPropiedades[1],
             cadeteLineaPropiedades[2],
-            long.Parse(cadeteLineaPropiedades[3]),
-            new List<Pedido>()
+            long.Parse(cadeteLineaPropiedades[3])
           );
 
           listaDeCadetes.Add(cadete);
@@ -33,7 +33,8 @@ public class Datos {
 
   static public Cadeteria LeerCadeteria(string nombreDeArchivo) {
     Cadeteria cadeteria = null;
-    if (Existe(nombreDeArchivo)) {
+
+    if (IAccesoADAtos.Existe(nombreDeArchivo)) {
       string? contenidoDeArchivoDeCadeteria = File.ReadAllText(nombreDeArchivo);
       string[] cadeteriaLineaPropiedades = contenidoDeArchivoDeCadeteria.Split(",");
 
@@ -46,19 +47,5 @@ public class Datos {
     }
 
     return cadeteria;
-  }
-
-  static public Boolean Existe(string nombreDeArchivo) {
-    Boolean existeYTieneCotenido = false;
-
-    if (File.Exists(nombreDeArchivo)) {
-      string? contenidoDeArchivo = File.ReadAllText(nombreDeArchivo);
-
-      if (!string.IsNullOrEmpty(contenidoDeArchivo)) {
-        existeYTieneCotenido = true;
-      }
-    }
-
-    return existeYTieneCotenido;
   }
 }

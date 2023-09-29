@@ -1,10 +1,11 @@
-﻿using EspacioCadeteria;
-using EspacioDatos;
+﻿using EspacioAccesoCSV;
+using EspacioAccesoJSON;
+using EspacioCadeteria;
+using EspacioUtils;
 
 internal class Program {
   private static void Main(string[] args) {
-    Cadeteria cadeteria = Datos.LeerCadeteria("cadeteria.csv");
-
+    Cadeteria cadeteria = InstanciarYPoblarCadeteria();
     int decision = MostrarMenuYPedirOpcion();
 
     while (true) {
@@ -36,7 +37,6 @@ internal class Program {
   }
 
   public static int MostrarMenuYPedirOpcion() {
-    Console.WriteLine("\n");
     Console.WriteLine("Ingrese alguna de las siguientes opciones:");
     
     Console.WriteLine(" 1- Dar de alta pedido");
@@ -57,5 +57,33 @@ internal class Program {
       Console.WriteLine("x Opción invalida, porfavor reintente");
       return MostrarMenuYPedirOpcion();
     }
+  }
+
+  public static Cadeteria InstanciarYPoblarCadeteria() {
+    Console.WriteLine("Desea cargar datos de: ");
+    Console.WriteLine(" 1- Archivo CSV");
+    Console.WriteLine(" 2- Archivo JSON");
+
+    int opcion = Utils.PedirInt("Opcion", true);
+    while (!new List<int>(){1, 2}.Contains(opcion)) {
+      Console.WriteLine(" x Opcion invalida, por favor reintente:");
+      opcion = Utils.PedirInt("Nro de pedido", true);
+    }
+
+    Cadeteria cadeteria = null;
+    switch(opcion) {
+      case 1:
+        cadeteria = AccesoCSV.LeerCadeteria("cadeteria.csv");
+        cadeteria.setListaCadetes(AccesoCSV.LeerCadetes("cadetes.csv"));
+        break;
+      case 2:
+        cadeteria = AccesoJSON.LeerCadeteria("cadeteria.json");
+        cadeteria.setListaCadetes(AccesoJSON.LeerCadetes("cadetes.json"));
+        break;
+    }
+
+    Console.Clear();
+
+    return cadeteria;
   }
 }

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nombre": "Carlos Perez",
+    "direccion": "Calle 123",
+    "telefono": 5555555
+  },
+  {
+    "id": 2,
+    "nombre": "Ana Lopez",
+    "direccion": "Avenida Principal",
+    "telefono": 5559876
+  },
+  {
+    "id": 3,
+    "nombre": "Juan Rodriguez",
+    "direccion": "Calle 456",
+    "telefono": 5551234
+  },
+  {
+    "id": 4,
+    "nombre": "Maria Sanchez",
+    "direccion": "Plaza Central",
+    "telefono": 5557890
+  },
+  {
+    "id": 5,
+    "nombre": "Luis González",
+    "direccion": "Avenida Norte",
+    "telefono": 5552345
+  }
+]
