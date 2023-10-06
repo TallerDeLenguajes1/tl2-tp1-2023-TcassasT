@@ -1,30 +1,47 @@
 using EspacioCadete;
 using EspacioCadeteria;
-using EspacioPedido;
 
 namespace EspacioInforme;
 
+public class InformeCadete {
+  private int cadeteId;
+  private long totalRecaudado;
+  private int porcentajeTotal;
+  private int cantidadPedidos;
+
+  public int CadeteId { get => cadeteId; set => cadeteId = value; }
+  public long TotalRecaudado { get => totalRecaudado; set => totalRecaudado = value; }
+  public int PorcentajeTotal { get => porcentajeTotal; set => porcentajeTotal = value; }
+  public int CantidadPedidos { get => cantidadPedidos; set => cantidadPedidos = value; }
+}
+
 public class Informe {
-  public String GenerarInformeCadeteria(Cadeteria cadeteria) {
-    string output = "";
+  private long total;
+  private List<InformeCadete> cadetes = new List<InformeCadete>();
+  public long Total { get => total; }
+  public List<InformeCadete> Cadetes = new List<InformeCadete>();
 
-    long totalRecaudado = cadeteria.ListadoCadetes.Sum(cadete => cadeteria.JornalACobrar(cadete));
-    output += 
-    output += "- Informe de cierre\n";
-    output += " x Monto total recaudado: " + totalRecaudado + "\n";
-    output += " x Informe por cadete:\n";
+  public Informe(long total, List<InformeCadete> listaInformeCadete) {
+    this.total = total;
+    this.cadetes = listaInformeCadete;
+  }
 
-    if (cadeteria.Pedidos.Count() != 0) {
-      foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
-        output += "   x Cadete " + cadeteItem.Nombre + "\n";
-        output += "     x Pedidos: " + cadeteria.GetCantidadDePedidos(cadeteItem) + "\n";
-        output += "     x Total recaudado: " + cadeteria.JornalACobrar(cadeteItem) + "\n";
-        output += "     x Porcentaje respecto al total de pedidos: %" + (cadeteria.GetCantidadDePedidos(cadeteItem) * 100 / cadeteria.GetCantidadDePedidos()) + "\n";
-      }
-    } else {
-      Console.WriteLine("   x No hay pedidos registrados, se omite detalle por cadete.");
+  public static Informe GenerarInformeCadeteria(Cadeteria cadeteria) {
+    List<InformeCadete> listaInformeCadete = new List<InformeCadete>();
+    foreach (Cadete cadeteItem in cadeteria.ListadoCadetes) {
+      InformeCadete informeCadete = new InformeCadete();
+      informeCadete.CadeteId = cadeteItem.Id;
+      informeCadete.CantidadPedidos = cadeteria.GetPedidosDeCadete(cadeteItem.Id).Count();
+      informeCadete.TotalRecaudado = cadeteria.JornalACobrar(cadeteItem.Id);
+      informeCadete.PorcentajeTotal = cadeteria.GetPedidosDeCadete(cadeteItem.Id).Count() * 100 / cadeteria.GetCantidadDePedidos();
+      listaInformeCadete.Add(informeCadete);
     }
 
-    return output;
+    Informe informeCadeteria = new Informe(
+      cadeteria.ListadoCadetes.Sum(cadete => cadeteria.JornalACobrar(cadete.Id)),
+      listaInformeCadete
+    );
+
+    return informeCadeteria;
   }
 }
